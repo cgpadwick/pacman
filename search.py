@@ -148,14 +148,6 @@ def depthFirstSearch(problem):
   """
   "*** YOUR CODE HERE ***"
 
-  #print type(problem)
-  #print "Start:", problem.getStartState()
-  #print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-  #print "Start's successors:", problem.getSuccessors(problem.getStartState())
-
-  #util.raiseNotDefined()
-
-  actions = []
   closed = dict()
   fringe = util.Stack()
   startnode = Node(problem.getStartState(), parent=None, action='Stop', path_cost=0)
@@ -183,7 +175,26 @@ def breadthFirstSearch(problem):
   [2nd Edition: p 73, 3rd Edition: p 82]
   """
   "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  closed = dict()
+  fringe = util.Queue()
+  startnode = Node(problem.getStartState(), parent=None, action='Stop', path_cost=0)
+  fringe.push(startnode)
+
+  while 1:
+    if fringe.isEmpty():
+      raise ValueError('fringe is empty!')
+    currentnode = fringe.pop()
+    coords = currentnode.state
+
+    if problem.isGoalState(coords):
+      return currentnode.solution()
+
+    if coords not in closed:
+      closed[coords] = 'visited'
+
+      for successor in problem.getSuccessors(coords):
+        fringe.push(Node(successor[0], parent=currentnode, action=successor[1],
+                         path_cost=successor[2]))
       
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
