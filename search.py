@@ -64,6 +64,15 @@ class Node:
       node = node.parent
     return list(reversed(path_back))
 
+  def totalpathcost(self):
+    """Return a path cost from this node to the root of this node"""
+    node, total_path_cost = self, 0
+    while node:
+      total_path_cost += node.path_cost
+      node = node.parent
+
+    return total_path_cost
+
   # We want for a queue of nodes in breadth_first_search or
   # astar_search to have no duplicated states, so we treat nodes
   # with the same state as equal. [Problem: this may not be what you
@@ -199,7 +208,27 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
   "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  closed = dict()
+  fringe = util.PriorityQueue()
+  startnode = Node(problem.getStartState(), parent=None, action='Stop', path_cost=0)
+  fringe.push(startnode, startnode.totalpathcost())
+
+  while 1:
+    if fringe.isEmpty():
+      raise ValueError('fringe is empty!')
+    currentnode = fringe.pop()
+    coords = currentnode.state
+
+    if problem.isGoalState(coords):
+      return currentnode.solution()
+
+    if coords not in closed:
+      closed[coords] = 'visited'
+
+      for successor in problem.getSuccessors(coords):
+        newnode = Node(successor[0], parent=currentnode, action=successor[1],
+                         path_cost=successor[2])
+        fringe.push(newnode, newnode.totalpathcost())
 
 def nullHeuristic(state, problem=None):
   """
